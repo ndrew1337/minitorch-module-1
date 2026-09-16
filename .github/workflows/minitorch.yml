@@ -1,0 +1,44 @@
+# Проверки для GitHub Actions (домашка DL2, часть 1).
+#
+# ВАЖНО: перед сдачей оставь в шаге "Test with pytest" только те строки pytest,
+# задачи для которых ты действительно решил. Первая же упавшая строка обрывает
+# весь шаг, поэтому одна нерешённая задача красит весь прогон, и проверки
+# по уже сделанным задачам просто не отработают.
+
+name: minitorch
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -Ue .
+
+      - name: Test with pytest
+        run: |
+          echo "Module 1"
+          pytest tests -x -m task0_1
+          pytest tests -x -m task0_2
+          pytest tests -x -m task0_3
+          pytest tests -x -m task0_4
+          pytest tests -x -m task1_1
+          pytest tests -x -m task1_2
+          pytest tests -x -m task1_3
+          pytest tests -x -m task1_4
